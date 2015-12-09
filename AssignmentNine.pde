@@ -4,7 +4,7 @@ PImage img;
 PImage photo;
 void setup () {
   size (600, 365);
-  img = loadImage("log.jpg");
+  img = loadImage("https://cloud.githubusercontent.com/assets/16229382/11696457/f83c6f16-9e79-11e5-9b2a-8c400c02945f.jpg");
   photo = loadImage("https://cloud.githubusercontent.com/assets/16229382/11695267/e8475a7c-9e73-11e5-97ba-1e0ba0c6ed55.jpg"
 );
 }
