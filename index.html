@@ -2,10 +2,120 @@
   <header>
   <script src="https://raw.githubusercontent.com/processing-js/processing-js/v1.4.8/processing.js"></script>
   </header>
-  <h1>Your FINAL SKETCH Title</h1>
+  <h1>Mario</h1>
   <script type="text/processing" data-processing-target="mycanvas-final">
   
-  <!-- Your FINAL SKETCH goes here -->
+//JOSEPH ENSLIN FINAL ASSIGNMENT MAGD 150
+//PROFESSOR: NICK HWANG
+
+//ARRAY
+Particle[] particles = new Particle[0];
+//VARIABLES
+float radius = 40;
+float circle_X = 104;
+float circle_Y = 60;
+int pressed = 0;
+int pressedState = 0;
+int maxParticles =100;
+PImage img;
+PImage pic;
+PImage img2;
+PImage shot;
+//CLASS
+Timer myTimer;
+Coin myCoin;
+BlackMario myBlackMario;
+ColorMario myColorMario;
+Goomba myGoomba;
+
+void setup(){
+  shot = loadImage("mario2.jpg");//surprise if you put left mouse in corner
+  img = loadImage("coin.jpg");//background for coin
+  pic = loadImage("mario.jpg");//background for mario
+  img2 = loadImage("goomba.jpg");//background for goomba (sometimes appears sometimes does not, i do not know how to fix)
+  size(350,350);
+  noStroke();
+  myTimer = new Timer(10000);
+  myCoin = new Coin();
+  myGoomba = new Goomba();
+  myBlackMario = new BlackMario();
+  myColorMario = new ColorMario();
+}
+
+void draw() {
+  background(255);
+  line(0,height/2,width,height);
+  myColorMario.display();
+  myBlackMario.display();
+  if (pressedState==1){ // clicking changes state
+  background(0);
+    image(img2,0,0,width,height);
+    myGoomba.display();
+  } else if (pressedState==2){ // clicking changes state
+    background(255);
+    image(img,0,0,width,height);
+    myCoin.display();
+  } else { //clicking changes state yet again - back to original 
+    background(255);
+    image(pic,0,0,width,height);
+    myBlackMario.display();
+  }
+      if (myTimer.isFinished()){
+      println("THE END!");//timer says "THE END!" after 10 seconds
+    }
+    fill(#eec900); //coin color
+  particles = (Particle[]) append(particles, new Particle(300, 0));
+  if (particles.length>maxParticles) {//how many coins
+    particles = (Particle[]) subset(particles, 1);
+  }
+  for (int i=0; i<particles.length; i++) {
+      particles[i].x += particles[i].xVel;//speed of coins #1
+      particles[i].y += particles[i].yVel;//speed of coins #2
+  ellipse(particles[i].x, particles[i].y, particles[i].partsize, particles[i].partsize);//varying size of coins
+  }
+   if ( dist(mouseX, mouseY, circle_X, circle_Y) < radius) {
+  image(shot,0,0,width,height); //hit detection, left corner by mario hat
+  } else {
+    fill(255);
+    ellipse(1,1,1,1);
+  }
+
+}
+class Particle { //particle class
+//VARIABLES 
+  float x;        
+  float y;        
+  float xVel;     
+  float yVel;      
+  float partsize;   
+  Particle(float xpos, float ypos) {
+    x = xpos = random (0,600);
+    y = ypos;
+    xVel = random (-1, 2);  
+    yVel = random (0, 3);   
+    partsize = random (2, 7); //random size, width, height, and all to make a partcile/coin fall
+    
+  }
+
+}
+
+
+void keyPressed(){
+  if (keyPressed) {//flashing mario if held down, works on all states -- HOLD DOWN!
+    myColorMario.display();
+  }
+}
+
+void mousePressed(){ //how to change states, adds up the clicks until overrides at 3 and goes back to the original
+  if (mousePressed) {
+    pressed = pressed +1;
+    pressedState = (pressed%3);
+ 
+   
+  }
+}
+//END!
+
 
   </script>
   <canvas id="mycanvas-final"></canvas>
@@ -124,40 +234,326 @@ endShape();
   <p>Description:</p>
         <br />
         <br />
-  <h1>Your Sketch2 Title</h1>
+  <h1>Basketball</h1>
   <script type="text/processing" data-processing-target="mycanvas2">
+  float posX=25;
+float posY=200;
+int ballDiameter=40;
+float velocityY=10;
+float gravity=1.5;
+boolean onGround=false;
+float jumpSize=-28.6;
+float movementSpeed=5;
+
+void setup(){
+  size(800,600);
+}
+void draw(){
+  background(135,206,250);
+  fill(0);
+  rect(1,50,1,300);
+  rect(799,50,799,300);
   
-  <!-- Your sketch2 goes here -->
+  fill(255,218,185);
+  rect(1,300,800,800);
+  line(0,height/2,width,height/2);
+  if (keyPressed == false){
+    fill(0);
+    textSize(32);
+    text("Press any key to end session",200,500);
+  } else {
+    fill(0);
+    textSize(32);
+    text("Key was pressed, reload game",180,500);
+    while(keyPressed == true){
+    noLoop();
+    }
+  }
+  if (keyPressed == false){
+      println("Press any key to end session");
+  } else {
+    println("Key was pressed, reload game");
+  }
+  update();
+}
+void update(){
+  fill(255,140,0);
+  velocityY = gravity+velocityY;
+  posY = velocityY + posY;
+  if (posY + (ballDiameter/2) >= height/2){
+    posY = height/2 - (ballDiameter/2);
+    onGround = true;
+  } else { 
+    onGround = false;
+  }
+  ellipse(posX,posY,ballDiameter,ballDiameter);
+  fill(255,0,0);
+  rect(700,100,100,25);
+  rect(1,100,95,25);
+  posX= posX + movementSpeed;
+  if (posX + (ballDiameter/2) >= width) {
+    movementSpeed = -5;
+  } else if(posX - (ballDiameter/2) <= 0){
+    movementSpeed = 5;
+  }
+}
+void mousePressed(){
+  if (onGround){
+    jump();
+  }
+}
+void jump(){
+  velocityY=jumpSize;
+}
 
   </script>
   <canvas id="mycanvas2"></canvas>
   <p>Description:</p>
         <br />
         <br />
-  <h1>Your Sketch3 Title</h1>
+  <h1>Steak and Food</h1>
   <script type="text/processing" data-processing-target="mycanvas3">
   
-  <!-- Your sketch3 goes here -->
+PImage img;
+float speedX = 1;
+float speedY = 0;
+float x = 100;
+float y = 80;
+float w = 50;
+float h = 50;
+ 
+
+Ball ball1;
+Ball ball2;
+Ball ball3;
+Ball ball4;
+ 
+ 
+void setup(){
+  img = loadImage("steak.jpg");
+  size(500,500);
+  ball1=new Ball(color(160,82,45),25,20,3,6);
+  ball1.diameter=50;
+  ball2=new Ball(color(139,69,19),20,20,2,4);
+  ball2.diameter=40;
+  smooth();
+}
+
+
+ 
+void draw(){
+   background(255);
+   image(img,0,100);
+     image(img,0,0,width,height);
+   ball1.move();
+   ball2.move();
+    boolean isIntersect=ball1.isIntersecting(ball2);
+    if(isIntersect){
+    }
+   ball1.display();
+   ball2.display();
+     ellipse(x, y, w, h);
+  speedY = speedY + 0.5;
+  x = x + speedX;
+  y = y + speedY;
+  if ((x > width - w) || (x <= 0)) {
+    speedX = -speedX;
+  }
+  if (y > height - h) {
+    y = height - h;
+    speedY = speedY * -0.9;
+  }
+  else if (y <= 0) {
+    speedY = -speedY;
+  }
+}
+
+ 
+ 
+class Ball{
+ 
+    color currentColor;  
+    PVector position;
+    PVector speed;
+    float diameter; 
+ 
+
+    Ball(){  
+      this(color(255,0,0), width/2, height/2, 3, 5 );  
+    }
+   Ball(color _c, float _xpos,float _ypos, float _xspeed, float _yspeed){
+      currentColor=_c;
+      position=new PVector(_xpos,_ypos);
+      speed=new PVector(_xspeed,_yspeed);
+    }
+    void display(){
+       fill(currentColor);
+       ellipse(position.x,position.y,diameter,diameter);
+    }
+    void move(){
+      position.add(speed);
+      if(position.x > (width-diameter/2) || position.x < (0+diameter/2)){ 
+        speed.x *= -1;
+      }
+      if(position.y > (height-diameter/2) || position.y <(0+diameter/2)){
+        speed.y *=-1;
+      }
+    }
+   
+     boolean isIntersecting(Ball otherBall){
+        float distance= PVector.dist(this.position, otherBall.position);  
+      
+        if( distance <= (this.diameter / 2) + (otherBall.diameter / 2)){
+          return true;
+        }
+        return false;
+    } 
+}
+void mousePressed() {
+ 
+  speedX = random(-20, 20);     
+  speedY = -30;
+}
 
   </script>
   <canvas id="mycanvas3"></canvas>
   <p>Description:</p>
         <br />
         <br />
-  <h1>Your Sketch4 Title</h1>
+  <h1>Ol' Faithful</h1>
   <script type="text/processing" data-processing-target="mycanvas4">
+void setup() {
   
-  <!-- Your sketch4 goes here -->
+  background(0) ;
+  size(700,700) ;
+ 
+  fill(222,184,135) ;
+  rect(1,600,700,700) ;
+  
+  fill(135,206,250) ;
+  rect(300,300,75,300) ;
+  
+  fill(255) ;
+rect(350,300,75,300) ;
+  
+fill(135,206,250) ;
+  ellipse(300,300,100,100) ;
+  
+  fill(255) ;
+  ellipse(250,250,100,100) ;
+  
+  fill(135,206,250) ;
+  ellipse(220,340,100,100) ;
+  
+ fill(255) ;
+  ellipse(300,350,100,100) ;
+  
+  fill(135,206,250) ;
+  ellipse(350,350,100,100) ;
+  
+  fill(255) ;
+  ellipse(300,300,100,100) ;
+  
+  fill(135,206,250) ;
+  ellipse(400,250,100,100) ;
+  
+  fill(135,206,250) ;
+  ellipse(375,270,100,100) ;
+  
+  fill(255) ;
+  ellipse(320,250,100,100) ;
+  
+  fill(255) ;
+  ellipse(500,350,100,100) ;
+  
+  fill(135,206,250) ;
+  ellipse(400,310,100,100) ;
+  
+fill(135,206,250) ;
+  ellipse(450,330,100,100) ;
+  
+  fill(255) ;
+  ellipse(450,270,100,100) ;
+  
+  fill(135,206,250) ;
+  ellipse(480,270,100,100) ;
+  
+  fill(255) ;
+  point(50,200) ;
+  
+  fill(255) ;
+  point(400,200) ;
+  
+  fill(160,82,45) ;
+  line(699,400,200,200) ;
+ 
+   fill(160,82,45) ;
+  line(1,400,300,200) ;
+  
+}
+  
+void loop()  {
+}
 
   </script>
   <canvas id="mycanvas4"></canvas>
   <p>Description:</p>
         <br />
         <br />
-  <h1>Your Sketch5 Title</h1>
+  <h1>Dance Party</h1>
   <script type="text/processing" data-processing-target="mycanvas5">
   
-  <!-- Your sketch5 goes here -->
+  float circle_x = 0;
+float circle_y = 25;
+float direction = 0;
+
+void draw() {
+  background(0);
+  stroke(154,87,0);
+  strokeWeight(6);
+  line(0,0,mouseX,mouseY);
+  
+  if(mousePressed){
+    strokeWeight (mouseY/10);
+    stroke(random(255),random(255),random(255),mouseX/3);
+    line(random(width),random(height),random(width),random(height));
+  }
+  
+  noFill();
+  stroke(255,0,0);
+  ellipse(mouseX,mouseY,50,50);
+
+strokeWeight(8);
+  point(0,0);
+  
+  strokeWeight(8);
+  point(800,800);
+  
+  
+  
+}
+void setup()   {
+  size(800,800);
+  background(0);
+  frameRate(50);
+  stroke(255,0,0);
+  
+
+  rect(100,100,600,600);
+  fill(255,0,0);
+ ellipse(600,750,75,75);
+ fill(0,0,255);
+  ellipse(700,750,75,75);
+  fill(222,184,135);
+  rect(750,100,700,600);
+  rect(0,100,50,600);
+  
+}
+  
+void loop(){
+  
+  
+}
 
   </script>
   <canvas id="mycanvas5"></canvas>
